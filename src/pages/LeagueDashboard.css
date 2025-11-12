@@ -1,0 +1,240 @@
+.league-dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.header-info {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.team-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.team-info img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.team-info h1 {
+    margin: 0;
+    color: #333;
+    font-size: 2rem;
+}
+
+.team-info p {
+    margin: 0.5rem 0 0 0;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.next-match-banner {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: white;
+}
+
+.next-match-banner h2 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.8rem;
+}
+
+.match-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.match-info .team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.match-info .team img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    background: white;
+    border-radius: 50%;
+    padding: 0.5rem;
+}
+
+.match-info .team span {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.match-info .vs {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.play-match-btn {
+    background: white;
+    color: #ff6b6b;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.play-match-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tab.active {
+    background: white;
+    color: #667eea;
+}
+
+.standings-table {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    overflow-x: auto;
+}
+
+.standings-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.standings-table th {
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 2px solid #eee;
+    color: #666;
+    font-weight: 600;
+}
+
+.standings-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.standings-table tr.user-team {
+    background: #e3f2fd;
+    font-weight: bold;
+}
+
+.team-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.team-cell img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.position {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.points {
+    color: #667eea;
+}
+
+.fixtures-list {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.fixtures-list h3 {
+    margin: 0 0 1.5rem 0;
+    color: #333;
+}
+
+.fixture-card {
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #ddd;
+}
+
+.fixture-card.user-match {
+    border-left-color: #667eea;
+    background: #e3f2fd;
+}
+
+.fixture-card.completed {
+    opacity: 0.7;
+}
+
+.fixture-teams {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.fixture-team {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.fixture-team img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.fixture-score {
+    font-size: 1.2rem;
+    font-weight: bold;
+    min-width: 80px;
+    text-align: center;
+}
+
+.fixture-status {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}

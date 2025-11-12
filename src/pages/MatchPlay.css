@@ -1,0 +1,267 @@
+.match-play {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.match-container, .results-screen, .no-match {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.match-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.match-header h1 {
+    color: #333;
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.match-header p {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.match-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.match-team {
+    flex: 1;
+    text-align: center;
+}
+
+.match-team img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+}
+
+.match-team h2 {
+    color: #333;
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.match-team .rating {
+    color: #666;
+    font-size: 1rem;
+}
+
+.vs-section {
+    flex-shrink: 0;
+}
+
+.vs-section .vs {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.play-section {
+    text-align: center;
+}
+
+.simulate-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1.5rem 4rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.simulate-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+}
+
+.simulate-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.simulating-info {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.simulating-info .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem auto;
+}
+
+.simulating-info p {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+}
+
+.simulating-info .sub-text {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.results-screen {
+    text-align: center;
+}
+
+.results-screen h1 {
+    color: #4caf50;
+    font-size: 2.5rem;
+    margin: 0 0 2rem 0;
+}
+
+.user-result {
+    background: #f9f9f9;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.user-result h2 {
+    color: #333;
+    font-size: 1.5rem;
+    margin: 0 0 1.5rem 0;
+}
+
+.result-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.result-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.result-team img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.result-team span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.result-score {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.match-description {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.simulation-info {
+    background: #e3f2fd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.simulation-info h3 {
+    color: #333;
+    font-size: 1.3rem;
+    margin: 0 0 1rem 0;
+}
+
+.simulation-info p {
+    color: #666;
+    font-size: 1rem;
+    margin: 0.5rem 0;
+}
+
+.matchday-complete {
+    color: #4caf50 !important;
+    font-weight: bold !important;
+    margin-top: 1rem !important;
+}
+
+.dashboard-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.dashboard-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.no-match {
+    text-align: center;
+}
+
+.no-match h2 {
+    color: #333;
+    font-size: 2rem;
+    margin: 0 0 1rem 0;
+}
+
+.no-match p {
+    color: #666;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.no-match button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

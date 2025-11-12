@@ -3,6 +3,10 @@ import Home from './pages/Home'
 import ClassicMatch from './pages/ClassicMatch'
 import Prediction from './pages/Prediction'
 import Players from './pages/Players'
+import LeagueFormat from './pages/LeagueFormat'
+import TeamSelection from './pages/TeamSelection'
+import LeagueDashboard from './pages/LeagueDashboard'
+import MatchPlay from './pages/MatchPlay'
 import './App.css'
 
 function App() {
@@ -13,7 +17,10 @@ function App() {
         <Route path="/classic-match" element={<ClassicMatch />} />
         <Route path="/classic-match/prediction" element={<Prediction />} />
         <Route path="/players" element={<Players />} />
-        <Route path="/league-format" element={<div>League Format Page - Coming Soon</div>} />
+        <Route path="/league-format" element={<LeagueFormat />} />
+        <Route path="/league-format/team-selection/:slotNumber" element={<TeamSelection />} />
+        <Route path="/league-format/dashboard/:slotNumber" element={<LeagueDashboard />} />
+        <Route path="/league-format/match/:slotNumber" element={<MatchPlay />} />
       </Routes>
     </Router>
   )
