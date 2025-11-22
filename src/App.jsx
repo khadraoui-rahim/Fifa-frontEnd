@@ -7,6 +7,7 @@ import LeagueFormat from './pages/LeagueFormat'
 import TeamSelection from './pages/TeamSelection'
 import LeagueDashboard from './pages/LeagueDashboard'
 import MatchPlay from './pages/MatchPlay'
+import Standings from './pages/Standings'
 import './App.css'
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/league-format/team-selection/:slotNumber" element={<TeamSelection />} />
         <Route path="/league-format/dashboard/:slotNumber" element={<LeagueDashboard />} />
         <Route path="/league-format/match/:slotNumber" element={<MatchPlay />} />
+        <Route path="/league-format/standings/:slotNumber" element={<Standings />} />
       </Routes>
     </Router>
   )

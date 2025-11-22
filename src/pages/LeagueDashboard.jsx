@@ -12,7 +12,7 @@ function LeagueDashboard() {
     const [fixtures, setFixtures] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('standings');
+    const [upcomingFixtures, setUpcomingFixtures] = useState([]);
 
     useEffect(() => {
         loadDashboardData();
@@ -35,6 +35,12 @@ function LeagueDashboard() {
             if (slotRes.data?.currentMatchday) {
                 const fixturesRes = await getMatchdayFixtures(slotNumber, slotRes.data.currentMatchday);
                 setFixtures(fixturesRes.data);
+
+                // Get upcoming fixtures (next 5 matches after next match)
+                const upcoming = fixturesRes.data
+                    .filter(f => f.status === 'pending')
+                    .slice(0, 5);
+                setUpcomingFixtures(upcoming);
             }
         } catch (err) {
             setError(err.message);
@@ -43,11 +49,18 @@ function LeagueDashboard() {
         }
     };
 
-    const getPositionColor = (position) => {
-        if (position <= 4) return '#4caf50'; // Champions League
-        if (position <= 6) return '#2196f3'; // Europa League
-        if (position >= 18) return '#f44336'; // Relegation
-        return '#666';
+    const getUserTeamPosition = () => {
+        const userStanding = standings.find(s => s.isUserTeam);
+        return userStanding ? userStanding.position : null;
+    };
+
+    const getOrdinalSuffix = (num) => {
+        const j = num % 10;
+        const k = num % 100;
+        if (j === 1 && k !== 11) return num + 'ST';
+        if (j === 2 && k !== 12) return num + 'ND';
+        if (j === 3 && k !== 13) return num + 'RD';
+        return num + 'TH';
     };
 
     if (loading) {
@@ -68,148 +81,124 @@ function LeagueDashboard() {
     }
 
     return (
-        <div className="league-dashboard">
-            <div className="dashboard-header">
-                <button className="back-btn" onClick={() => navigate('/league-format')}>
-                    ← Back to Slots
-                </button>
-                <div className="header-info">
-                    <div className="team-info">
-                        {saveSlot?.userTeam?.logo && (
-                            <img src={saveSlot.userTeam.logo} alt={saveSlot.userTeam.team} />
-                        )}
-                        <div>
-                            <h1>{saveSlot?.userTeam?.team}</h1>
-                            <p>Season {saveSlot?.currentSeason} - Matchday {saveSlot?.currentMatchday}/38</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {nextMatch && (
-                <div className="next-match-banner">
-                    <h2>🎮 Next Match</h2>
-                    <div className="match-info">
-                        <div className="team">
-                            <img src={nextMatch.homeTeam.logo} alt={nextMatch.homeTeam.team} />
-                            <span>{nextMatch.homeTeam.team}</span>
-                        </div>
-                        <div className="vs">VS</div>
-                        <div className="team">
-                            <img src={nextMatch.awayTeam.logo} alt={nextMatch.awayTeam.team} />
-                            <span>{nextMatch.awayTeam.team}</span>
-                        </div>
-                    </div>
-                    <button
-                        className="play-match-btn"
-                        onClick={() => navigate(`/league-format/match/${slotNumber}`)}
-                    >
-                        Play Match
+        <>
+            <div className="league-dashboard">
+                <div className="top-bar">
+                    <button className="back-btn" onClick={() => navigate('/league-format')}>
+                        ← Back to Slots
                     </button>
+                    <div className="team-banner team-banner-compact">
+                        <div className="team-banner-content">
+                            {saveSlot?.userTeam?.logo && (
+                                <img
+                                    src={saveSlot.userTeam.logo}
+                                    alt={saveSlot.userTeam.team}
+                                    className="team-logo team-logo-inline"
+                                />
+                            )}
+                            <h1 className="team-name">{saveSlot?.userTeam?.team}</h1>
+                        </div>
+                        <div className="position-badge">
+                            {getUserTeamPosition() && getOrdinalSuffix(getUserTeamPosition())}
+                        </div>
+                    </div>
                 </div>
-            )}
 
-            <div className="tabs">
-                <button
-                    className={`tab ${activeTab === 'standings' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('standings')}
-                >
-                    Standings
-                </button>
-                <button
-                    className={`tab ${activeTab === 'fixtures' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('fixtures')}
-                >
-                    Fixtures
-                </button>
-            </div>
-
-            {activeTab === 'standings' && (
-                <div className="standings-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Pos</th>
-                                <th>Team</th>
-                                <th>P</th>
-                                <th>W</th>
-                                <th>D</th>
-                                <th>L</th>
-                                <th>GF</th>
-                                <th>GA</th>
-                                <th>GD</th>
-                                <th>Pts</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {standings.map((standing) => (
-                                <tr
+                {/* Main Content Grid */}
+                <div className="dashboard-grid">
+                    {/* Left: Standings Table */}
+                    <div
+                        className="standings-section standings-clickable"
+                        onClick={() => navigate(`/league-format/standings/${slotNumber}`)}
+                    >
+                        <div className="standings-header">
+                            <div className="league-badge">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/LaLiga_EA_Sports_2023_Vertical_Logo.svg/512px-LaLiga_EA_Sports_2023_Vertical_Logo.svg.png" alt="La Liga" />
+                            </div>
+                            <h2>La Liga Standings</h2>
+                        </div>
+                        <div className="standings-table">
+                            <div className="table-header">
+                                <span className="col-pos">P</span>
+                                <span className="col-team"></span>
+                                <span className="col-stat">W</span>
+                                <span className="col-stat">D</span>
+                                <span className="col-stat">L</span>
+                                <span className="col-stat">GF</span>
+                                <span className="col-stat">GA</span>
+                                <span className="col-stat">PTS</span>
+                            </div>
+                            {standings.slice(0, 9).map((standing) => (
+                                <div
                                     key={standing._id}
-                                    className={standing.isUserTeam ? 'user-team' : ''}
+                                    className={`table-row ${standing.isUserTeam ? 'user-team' : ''}`}
                                 >
-                                    <td>
-                                        <span
-                                            className="position"
-                                            style={{ color: getPositionColor(standing.position) }}
-                                        >
-                                            {standing.position}
-                                        </span>
-                                    </td>
-                                    <td className="team-cell">
+                                    <span className="col-pos">{standing.position}</span>
+                                    <div className="col-team">
                                         <img src={standing.team.logo} alt={standing.team.team} />
                                         <span>{standing.team.team}</span>
-                                    </td>
-                                    <td>{standing.matchesPlayed}</td>
-                                    <td>{standing.wins}</td>
-                                    <td>{standing.draws}</td>
-                                    <td>{standing.losses}</td>
-                                    <td>{standing.goalsFor}</td>
-                                    <td>{standing.goalsAgainst}</td>
-                                    <td>{standing.goalDifference > 0 ? '+' : ''}{standing.goalDifference}</td>
-                                    <td className="points"><strong>{standing.points}</strong></td>
-                                </tr>
+                                    </div>
+                                    <span className="col-stat">{standing.wins}</span>
+                                    <span className="col-stat">{standing.draws}</span>
+                                    <span className="col-stat">{standing.losses}</span>
+                                    <span className="col-stat">{standing.goalsFor}</span>
+                                    <span className="col-stat">{standing.goalsAgainst}</span>
+                                    <span className="col-stat col-pts">{standing.points}</span>
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-
-            {activeTab === 'fixtures' && (
-                <div className="fixtures-list">
-                    <h3>Matchday {saveSlot?.currentMatchday} Fixtures</h3>
-                    {fixtures.map((fixture) => (
-                        <div
-                            key={fixture._id}
-                            className={`fixture-card ${fixture.isUserMatch ? 'user-match' : ''} ${fixture.status !== 'pending' ? 'completed' : ''}`}
-                        >
-                            <div className="fixture-teams">
-                                <div className="fixture-team">
-                                    <img src={fixture.homeTeam.logo} alt={fixture.homeTeam.team} />
-                                    <span>{fixture.homeTeam.team}</span>
-                                </div>
-                                <div className="fixture-score">
-                                    {fixture.status !== 'pending' ? (
-                                        <span className="score">{fixture.homeScore} - {fixture.awayScore}</span>
-                                    ) : (
-                                        <span className="vs">VS</span>
-                                    )}
-                                </div>
-                                <div className="fixture-team">
-                                    <img src={fixture.awayTeam.logo} alt={fixture.awayTeam.team} />
-                                    <span>{fixture.awayTeam.team}</span>
-                                </div>
-                            </div>
-                            {fixture.status !== 'pending' && (
-                                <div className="fixture-status">
-                                    {fixture.status === 'completed' ? '✅ Played' : '🤖 Simulated'}
-                                </div>
-                            )}
                         </div>
-                    ))}
+                    </div>
+
+                    {/* Right: Next Game & Upcoming Fixtures */}
+                    <div className="right-panel">
+                        {/* Next Game */}
+                        {nextMatch && (
+                            <div className="next-game-card">
+                                <h2>NEXT GAME</h2>
+                                <div className="match-display">
+                                    <div className="match-team">
+                                        <img src={nextMatch.homeTeam.logo} alt={nextMatch.homeTeam.team} />
+                                        <span>{nextMatch.homeTeam.team}</span>
+                                    </div>
+                                    <div className="vs">VS</div>
+                                    <div className="match-team">
+                                        <img src={nextMatch.awayTeam.logo} alt={nextMatch.awayTeam.team} />
+                                        <span>{nextMatch.awayTeam.team}</span>
+                                    </div>
+                                </div>
+                                <button
+                                    className="simulate-btn"
+                                    onClick={() => navigate(`/league-format/match/${slotNumber}`)}
+                                >
+                                    Simulate Game
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Upcoming Fixtures */}
+                        <div className="upcoming-fixtures-card">
+                            <h2>UPCOMING FIXTURES</h2>
+                            <div className="fixtures-list">
+                                {upcomingFixtures.map((fixture, index) => (
+                                    <div key={fixture._id || index} className="fixture-item">
+                                        <div className="fixture-team-left">
+                                            <span>{fixture.homeTeam.team}</span>
+                                            <img src={fixture.homeTeam.logo} alt={fixture.homeTeam.team} />
+                                        </div>
+                                        <span className="fixture-vs">VS</span>
+                                        <div className="fixture-team-right">
+                                            <img src={fixture.awayTeam.logo} alt={fixture.awayTeam.team} />
+                                            <span>{fixture.awayTeam.team}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            )}
-        </div>
+            </div>
+        </>
     );
 }
 
-export default LeagueDashboard;
+export default LeagueDashboard; 

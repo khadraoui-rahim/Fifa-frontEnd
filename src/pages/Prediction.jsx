@@ -5,8 +5,13 @@ import './Prediction.css';
 function Prediction() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [scores, setScores] = useState({ home: null, away: null });
+  const [finalScores, setFinalScores] = useState({ home: 0, away: 0 });
+  const [currentScores, setCurrentScores] = useState({ home: 0, away: 0 });
   const [description, setDescription] = useState('');
+  const [goalEvents, setGoalEvents] = useState([]);
+  const [timer, setTimer] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [displayedGoals, setDisplayedGoals] = useState([]);
 
   useEffect(() => {
     if (!location.state) {
@@ -14,84 +19,143 @@ function Prediction() {
       return;
     }
 
-    // Extract scores and description from prediction text
     const { prediction } = location.state;
     extractPrediction(prediction);
   }, [location.state, navigate]);
 
   const extractPrediction = (predictionText) => {
-    // Try to extract structured format: Score: X-Y and Description: ...
     const scoreMatch = predictionText.match(/Score:\s*(\d+)\s*[-–—]\s*(\d+)/i);
+    const homeGoalsMatch = predictionText.match(/Home Goals:\s*([\d,\s]*)/i);
+    const awayGoalsMatch = predictionText.match(/Away Goals:\s*([\d,\s]*)/i);
     const descMatch = predictionText.match(/Description:\s*(.+)/is);
-    
+
+    let homeScore = 0;
+    let awayScore = 0;
+    const goals = [];
+
     if (scoreMatch) {
-      setScores({
-        home: parseInt(scoreMatch[1]),
-        away: parseInt(scoreMatch[2])
-      });
-    } else {
-      // Fallback: try to extract any score pattern
-      const fallbackScore = predictionText.match(/(\d+)\s*[-–—]\s*(\d+)/);
-      if (fallbackScore) {
-        setScores({
-          home: parseInt(fallbackScore[1]),
-          away: parseInt(fallbackScore[2])
-        });
-      } else {
-        setScores({ home: 0, away: 0 });
-      }
+      homeScore = parseInt(scoreMatch[1]);
+      awayScore = parseInt(scoreMatch[2]);
     }
+
+    setFinalScores({ home: homeScore, away: awayScore });
+
+    // Parse goal minutes
+    if (homeGoalsMatch && homeGoalsMatch[1].trim()) {
+      const minutes = homeGoalsMatch[1].split(',').map(m => parseInt(m.trim())).filter(m => !isNaN(m));
+      minutes.forEach(min => goals.push({ minute: min, team: 'home' }));
+    }
+
+    if (awayGoalsMatch && awayGoalsMatch[1].trim()) {
+      const minutes = awayGoalsMatch[1].split(',').map(m => parseInt(m.trim())).filter(m => !isNaN(m));
+      minutes.forEach(min => goals.push({ minute: min, team: 'away' }));
+    }
+
+    // Sort goals by minute
+    goals.sort((a, b) => a.minute - b.minute);
+    setGoalEvents(goals);
 
     if (descMatch) {
       setDescription(descMatch[1].trim());
     } else {
-      // If no structured description, use the whole text
       setDescription(predictionText);
     }
+
+    // Start animation
+    setIsAnimating(true);
   };
 
-  if (!location.state) {
-    return null;
-  }
+  useEffect(() => {
+    if (!isAnimating) return;
 
-  const { homeTeam, awayTeam, prediction } = location.state;
+    const interval = setInterval(() => {
+      setTimer(prev => {
+        if (prev >= 90) {
+          setIsAnimating(false);
+          clearInterval(interval);
+          return 90;
+        }
+        return prev + 1;
+      });
+    }, 100); // 100ms per game minute = 9 seconds total animation
+
+    return () => clearInterval(interval);
+  }, [isAnimating]);
+
+  useEffect(() => {
+    // Check for goals at current timer minute
+    const newGoals = goalEvents.filter(g => g.minute === timer);
+
+    if (newGoals.length > 0) {
+      newGoals.forEach(goal => {
+        setDisplayedGoals(prev => [...prev, goal]);
+        setCurrentScores(prev => ({
+          ...prev,
+          [goal.team]: prev[goal.team] + 1
+        }));
+      });
+    }
+  }, [timer, goalEvents]);
+
+  if (!location.state) return null;
+
+  const { homeTeam, awayTeam } = location.state;
 
   return (
     <div className="prediction-container">
       <h1 className="prediction-page-title">MATCH PREDICTION</h1>
 
-      <div className="score-display-wrapper">
+      <div className="match-display-area">
         {/* Home Team */}
         <div className="team-score-panel">
-          <img 
-            src={homeTeam.logo} 
-            alt={homeTeam.team} 
+          <img
+            src={homeTeam.logo}
+            alt={homeTeam.team}
             className="team-score-logo"
           />
           <h2 className="team-score-name">{homeTeam.team}</h2>
-          <div className="score-box">{scores.home !== null ? scores.home : '-'}</div>
+          <div className="score-box">{currentScores.home}</div>
         </div>
 
-        {/* VS Divider */}
-        <div className="vs-divider">
-          <span>VS</span>
+        {/* Central Timeline */}
+        <div className="timeline-container">
+          <div className="timer-display">
+            <span className="timer-value">{timer}'</span>
+          </div>
+
+          <div className="timeline-track">
+            {displayedGoals.map((goal, index) => (
+              <div
+                key={index}
+                className={`goal-event ${goal.team === 'home' ? 'goal-home' : 'goal-away'}`}
+                style={{ top: `${(goal.minute / 90) * 100}%` }}
+              >
+                <span className="goal-text">GOAL {goal.minute}"</span>
+                <div className="goal-marker"></div>
+              </div>
+            ))}
+            <div
+              className="timeline-progress"
+              style={{ height: `${(timer / 90) * 100}%` }}
+            ></div>
+          </div>
         </div>
 
         {/* Away Team */}
         <div className="team-score-panel">
-          <img 
-            src={awayTeam.logo} 
-            alt={awayTeam.team} 
+          <img
+            src={awayTeam.logo}
+            alt={awayTeam.team}
             className="team-score-logo"
           />
           <h2 className="team-score-name">{awayTeam.team}</h2>
-          <div className="score-box">{scores.away !== null ? scores.away : '-'}</div>
+          <div className="score-box">{currentScores.away}</div>
         </div>
       </div>
 
-      {/* Match Description */}
-      {description && (
-        <div className="prediction-details">
+      {/* Match Description - Only show after match ends */}
+      {!isAnimating && timer >= 90 && description && (
+        <div className="prediction-details fade-in">
           <h3 className="prediction-details-title">Match Summary</h3>
           <div className="prediction-details-content">
             <p>{description}</p>
